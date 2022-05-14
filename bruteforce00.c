@@ -36,7 +36,7 @@ void _encrypt(long key, char *ciph, int len){
 }
 
 
-char search[] = " program ";
+char search[] = " lectus ";
 
 
 int tryKey(long key, char *ciph, int len){
@@ -51,6 +51,7 @@ int tryKey(long key, char *ciph, int len){
 
 
 int main(int argc, char *argv[]){
+	double t1, t2;
 	int N, id;
 	long upper = (1L << 56);
 	long mylower, myupper;
@@ -84,6 +85,8 @@ int main(int argc, char *argv[]){
 	MPI_Comm comm = MPI_COMM_WORLD;
 
 	MPI_Init(NULL, NULL);
+	t1 = MPI_Wtime();
+
 	MPI_Comm_size(comm, &N);
 	MPI_Comm_rank(comm, &id);
 
@@ -118,8 +121,9 @@ int main(int argc, char *argv[]){
 	if(id==0){
 		MPI_Wait(&req, &st);
 		decrypt(found, (char *)cipher, ciphlen);
-
-		printf("FOUND KEY:\n %li %s\n", found, cipher);
+		t2 = MPI_Wtime();
+		printf("Key encountered:\n%li,\nText:\n%s\n", found, cipher);
+		printf("Elapsed time is %f seconds\n", t2 - t1);
 	}
 
 	free(cipher);
